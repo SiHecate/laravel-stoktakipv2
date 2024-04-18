@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ImageController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TransactionController;
-
+use App\Http\Middleware\RoleMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +83,19 @@ Route::prefix('image')->middleware('auth:sanctum')->group(function() {
 });
 
 Route::prefix('/admin')->group(function() {
-    Route::get('/userCurrent', [AdminController::class, 'userCurrent']);
     Route::get('/userList', [AdminController::class, 'userList']);
+});
+
+Route::get('/userCurrent', [AdminController::class, 'userCurrent']);
+
+Route::prefix('/admin')->middleware(RoleMiddleware::class, 'adminPermission')->group(function() {
+    Route::get('/userRole' , [RoleController::class, 'returnUserRole']);
+});
+
+Route::prefix('/mod')->middleware(RoleMiddleware::class, 'modPermission')->group(function() {
+    Route::get('/userRole' , [RoleController::class, 'returnUserRole']);
+});
+
+Route::prefix('/user')->middleware(RoleMiddleware::class, 'userPermission')->group(function() {
+    Route::get('/userRole' , [RoleController::class, 'returnUserRole']);
 });

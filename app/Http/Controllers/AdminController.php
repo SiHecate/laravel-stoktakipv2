@@ -7,6 +7,7 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
+    // return all users
     public function userList() {
         $users = User::all();
         foreach($users as $user) {
@@ -23,24 +24,11 @@ class AdminController extends Controller
         ]);
     }
 
+    // return current user
     public function userCurrent(Request $request) {
         $user = $request->user();
         return response()->json([
             'user' => $user
-        ]);
-    }
-
-    public function userLogin(Request $request) {
-        $credentials = $request->only('email', 'password');
-        if (auth()->attempt($credentials)) {
-            $request->session()->regenerate();
-            return response()->json([
-                'message' => 'Login successful'
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Login failed'
         ]);
     }
 }

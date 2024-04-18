@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +13,59 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Admin Kullanıcı Oluşturma
+        $this->createAdminUser();
+        $this->createModeratorUser();
+        $this->createUserUser();
+        // Gereken diğer seed işlemlerini burada başlatabilirsiniz
+    }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+    /**
+     * Admin kullanıcı oluşturur ve kullanıcıya admin rolünü atar.
+     */
+    private function createAdminUser(): void
+    {
+        // Admin kullanıcı bilgileri
+        $adminUser = User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('admin123'),
         ]);
+
+        Role::create([
+            'user_id' => $adminUser->id,
+            'role' => 'admin',
+        ]);
+    }
+
+    private function createModeratorUser(): void
+    {
+        // Moderator kullanıcı bilgileri
+        $moderatorUser = User::factory()->create([
+            'name' => 'Moderator',
+            'email' => 'mod@mod.com',
+            'password' => bcrypt('mod123'),
+        ]);
+
+        Role::create([
+            'user_id' => $moderatorUser->id,
+            'role' => 'moderator',
+        ]);
+    }
+
+    private function createUserUser(): void
+    {
+        // User kullanıcı bilgileri
+        $userUser = User::factory()->create([
+            'name' => 'User',
+            'email' => 'user@user.com',
+            'password' => bcrypt('user123'),
+        ]);
+
+        Role::create([
+            'user_id' => $userUser->id,
+            'role' => 'user',
+        ]);
+
     }
 }

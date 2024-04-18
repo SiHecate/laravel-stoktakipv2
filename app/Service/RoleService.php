@@ -30,6 +30,14 @@ class RoleService {
         }
     }
 
+    public function getRoles(): array {
+        return Role::all()->toArray();
+    }
+
+    public function getUserWithRoles(): array {
+        return User::with('roles')->get()->toArray();
+    }
+
     public function getUserRole(int $userId): ?string {
         $role = Role::where('user_id', $userId)->first();
         return $role ? $role->role : null;

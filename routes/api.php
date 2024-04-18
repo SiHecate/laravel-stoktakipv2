@@ -93,6 +93,13 @@ Route::prefix('/admin')->middleware([AdminPermission::class])->group(function() 
             'status' => 'Connected'
         ]);
     });
+
+    Route::prefix('/role')->group(function() {
+        Route::post('/', [RoleController::class, 'AttachRole']);
+        Route::get('/roles', [RoleController::class, 'RoleList']);
+        Route::get('/user-roles', [RoleController::class, 'UserRoleList']);
+        Route::get('/{id}', [RoleController::class, 'returnUserRole']);
+    });
 });
 
 Route::prefix('/moderator')->middleware([ModeratorPermission::class])->group(function() {

@@ -21,18 +21,16 @@ class RoleController {
         return $this->roleService->attachRole($role, $user_id);
     }
 
-    public function listRoles() {
-        return $this->roleService->listRoles();
+    public function RoleList() {
+        return $this->roleService->getRoles();
     }
 
-    public function listUsersByRole() {
-        return $this->roleService->listUsersByRole();
+    public function UserRoleList() {
+        return $this->roleService->getUserWithRoles();
     }
 
     public function returnUserRole(Request $request) {
         $user_id = $request->user()->id;
-
         return $this->roleService->returnUserRole($user_id);
-
     }
 }

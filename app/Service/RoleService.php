@@ -7,8 +7,6 @@ use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleService {
-
-    // Kullanıcıya rol ekleme
     public function attachRole(int $userId, string $role): Response {
         $user = User::find($userId);
         if (!$user) {
@@ -34,8 +32,23 @@ class RoleService {
         return Role::all()->toArray();
     }
 
-    public function getUserWithRoles(): array {
-        return User::with('roles')->get()->toArray();
+    public function getUserWithRoles(): Response {
+        $userList = User::all();
+        $users = [];
+        foreach ($userList as $user) {
+            $role = Role::where('user_id', $user->id)->first();
+
+            if ($role) {
+                $users[] = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $role->role,
+                ];
+            }
+        }
+        return response()->json($users, 200);
+
     }
 
     public function getUserRole(int $userId): ?string {

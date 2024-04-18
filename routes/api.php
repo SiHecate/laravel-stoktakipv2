@@ -13,6 +13,7 @@ use App\Http\Middleware\AdminPermission;
 use App\Http\Middleware\Deneme;
 use App\Http\Middleware\ModeratorPermission;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\UserPermission;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,5 +93,22 @@ Route::prefix('/admin')->middleware([AdminPermission::class])->group(function() 
             'status' => 'Connected'
         ]);
     });
-    Route::get('/userRole', [RoleController::class, 'returnUserRole']);
+});
+
+Route::prefix('/moderator')->middleware([ModeratorPermission::class])->group(function() {
+    Route::get('/', function() {
+        return response()->json([
+            'message' => 'Welcome to Moderator Panel',
+            'status' => 'Connected'
+        ]);
+    });
+});
+
+Route::prefix('/user')->middleware(UserPermission::class)->group(function() {
+    Route::get('/', function() {
+        return response()->json([
+            'message' => 'Welcome to User Panel',
+            'status' => 'Connected'
+        ]);
+    });
 });

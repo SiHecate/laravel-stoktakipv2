@@ -1,91 +1,55 @@
 <?php
 
 namespace App\Service;
-use App\Models\User;
+
 use App\Models\Role;
+use App\Models\User;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleService {
 
-    public function attachRole($user_id, $role) {
-        $user = User::find($user_id);
-
+    // Kullanıcıya rol ekleme
+    public function attachRole(int $userId, string $role): Response {
+        $user = User::find($userId);
         if (!$user) {
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
+            return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Role kontrolü
-        if (!$this->roleCheck($role)) {
-            return response()->json([
-                'message' => 'Role not found'
-            ], 404);
+        if (!$this->isValidRole($role)) {
+            return response()->json(['message' => 'Role not found'], 404);
         }
 
-        $userRole = Role::where('user_id', $user_id)->where('role', $role)->first();
-
-        if (!$userRole) {
+        if (!$this->hasRole($userId, $role)) {
             Role::create([
-                'user_id' => $user_id,
-                'role' => $role
+                'user_id' => $userId,
+                'role' => $role,
             ]);
-            return response()->json([
-                'message' => 'Role added successfully'
-            ], 200);
+            return response()->json(['message' => 'Role added successfully'], 200);
         } else {
-            return response()->json([
-                'message' => 'Role already exists'
-            ], 400);
+            return response()->json(['message' => 'Role already exists'], 400);
         }
     }
 
-    public function roleCheck($role) {
+    public function getUserRole(int $userId): ?string {
+        $role = Role::where('user_id', $userId)->first();
+        return $role ? $role->role : null;
+    }
+
+    private function isValidRole(string $role): bool {
         $allowedRoles = ['admin', 'user', 'moderator'];
-
-        if (!in_array($role, $allowedRoles)) {
-            return false;
-        }
-
-        return true;
+        return in_array($role, $allowedRoles);
     }
 
-    public function listRoles() {
-        $roles = Role::all();
-        foreach($roles as $role) {
-            $response[] = [
-                'id' => $role->id,
-                'role' => $role->role,
-            ];
-        }
-
-        return response()->json([
-            'roles' => $response
-        ]);
+    private function hasRole(int $userId, string $role): bool {
+        return Role::where('user_id', $userId)->where('role', $role)->exists();
     }
 
-    public function listUsersByRole() {
-        $roles = Role::all();
-        foreach($roles as $role) {
-            $user = User::find($role->user_id);
-            $response[] = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $role->role,
-            ];
-        }
-    }
-
-    public function returnUserRole($user_id) {
-        $role = Role::where('user_id', $user_id)->first();
+    public function returnUserRole(int $userId) {
+        $role = Role::where('user_id', $userId)->first();
         if (!$role) {
-            return response()->json([
-                'message' => 'Role not found'
-            ], 404);
+            return response()->json(['message' => 'Role not found'], 404);
         }
 
-        return response()->json([
-            'role' => $role->role
-        ]);
+        return $role->role;
     }
 }

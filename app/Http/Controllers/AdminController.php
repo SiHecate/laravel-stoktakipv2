@@ -31,4 +31,6 @@ class AdminController extends Controller
             'user' => $user
         ]);
     }
+
+
 }

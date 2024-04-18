@@ -47,6 +47,8 @@ class CategoryService
         try {
             $category = Category::find($id);
 
+            dd('deneme');
+
             if ($category) {
                 return response()->json([
                     'data' => $category,

@@ -28,6 +28,8 @@ class ModeratorPermission
             } else {
                 return response()->json(['message' => 'You are not authorized to access this resource.'], 403);
             }
+        } else {
+            return response()->json(['message' => "You're not authorized"], 403);
         }
     }
 }
